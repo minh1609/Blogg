@@ -4,12 +4,26 @@ const redis = require("redis");
 const util = require("util");
 
 const client = redis.createClient("redis://localhost:6379");
-client.get = util.promisify(client.get); // make function return a promise
+client.hget = util.promisify(client.hget); // make function return a promise
 
-//overwrite exec
+//cache(): Querry make use of cahe server
+mongoose.Query.prototype.cache = function(option = {}) {
+    //this reference query
+    this.useCache = true;
+
+    this.hashKey = JSON.stringify(option.key || "");
+    return this;
+};
+//overwrite exec in query
 mongoose.Query.prototype.exec = async function() {
-    console.log("RUN QUERY");
+    //this reference Query
 
+    if (!this.useCache) {
+        return exec.apply(this, arguments);
+    }
+
+    //when mongoose need to go to DB to get data, it go to redis first
+    //get key from querry
     const key = JSON.stringify(
         Object.assign({}, this.getQuery(), {
             collections: this.mongooseCollection.name
@@ -17,14 +31,31 @@ mongoose.Query.prototype.exec = async function() {
     );
 
     //see if we have value for key in redis
-    const cacheValue = await client.get(key);
-    //if we do, return it
+    const cacheValue = await client.hget(this.hashKey, key);
+    //if we do, return data from redis
     if (cacheValue) {
+        const doc = JSON.parse(cacheValue);
+
+        //check if it is array or not
+        if (Array.isArray(doc)) {
+            //model(arg) return model object
+            //mongoose expect to get a Model object back, not JSON
+            return doc.map(d => new this.model(d));
+        } else {
+            return new this.model(doc);
+        }
     }
 
-    //if not, run q query to database, retrieve data from mongo
-
+    //if not, go to DB, retrieve data from that, then store data in cache server
     //apply: invokes the function and allows  to pass in arguments as an array.
     const result = await exec.apply(this, arguments);
-    console.log(result);
+    client.hset(this.hashKey, key, JSON.stringify(result));
+    return result;
+};
+
+module.exports = {
+    //delete data in Redis base on hashkey
+    clearHash(hashKey) {
+        client.del(JSON.stringify(hashKey));
+    }
 };
