@@ -28,12 +28,15 @@ app.use(passport.session());
 require("./routes/authRoutes")(app);
 require("./routes/blogRoutes")(app);
 
-if (["production", "ci"].includes(process.env.NODE_ENV)) {
+//PRODUCTION SET UP
+if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "ci") {
+    //If route do not match express round, try to match it with React Router
     app.use(express.static("client/build"));
-
     const path = require("path");
+
+    //If route is not defined, send back HTML file
     app.get("*", (req, res) => {
-        res.sendFile(path.resolve("client", "build", "index.html"));
+        res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
     });
 }
 
