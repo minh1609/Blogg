@@ -1,7 +1,4 @@
 //jest looking for all file .test.js to run
-
-const sessionFactory = require("./factories/sessionFactory");
-const userFactory = require("./factories/userFactory");
 const Page = require("./helper/page");
 
 let page;
@@ -17,7 +14,7 @@ afterEach(async () => {
     await page.close();
 });
 
-//Log in to app by set cookie for page
+//Sort cut Log in to app by set cookie for page
 logIn = async page => {
     //my cookie when I log in by Google ID
     await page.setCookie({
@@ -33,7 +30,7 @@ logIn = async page => {
 };
 
 test("header has correct text", async () => {
-    const text = await page.$eval("a.brand-logo", el => el.innerHTML);
+    const text = await page.getContentsOf("a.brand-logo");
 
     expect(text).toEqual("Blogster");
 });
@@ -46,11 +43,10 @@ test("Go to Google Oauth", async () => {
     expect(url).toMatch(/accounts\.google\.com/);
 });
 
-test("Show logout button when signed in", async () => {
-    logIn(page);
+test.only("Show logout button when signed in", async () => {
+    await page.logIn();
 
-    await page.waitFor('a[href="/auth/logout"]'); //wait for elemnt to load
-    const text = await page.$eval('a[href="/auth/logout"]', el => el.innerHTML);
+    const text = await page.getContentsOf('a[href="/auth/logout"]');
 
     expect(text).toEqual("Logout");
 });
