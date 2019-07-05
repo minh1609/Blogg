@@ -16,7 +16,7 @@ afterEach(async () => {
 
 //Sort cut Log in to app by set cookie for page
 logIn = async page => {
-    //my cookie when I log in by Google ID
+    //get from  cookie when log in by Google ID
     await page.setCookie({
         name: "express:sess",
         value:
@@ -26,7 +26,7 @@ logIn = async page => {
         name: "express:sess.sig",
         value: "Mgc2MrAFKnWx5oXz9jUZOFnKkEk"
     });
-    await page.goto("localhost:3000");
+    await page.goto("http://localhost:3000");
 };
 
 test("header has correct text", async () => {
@@ -43,7 +43,7 @@ test("Go to Google Oauth", async () => {
     expect(url).toMatch(/accounts\.google\.com/);
 });
 
-test.only("Show logout button when signed in", async () => {
+test("Show logout button when signed in", async () => {
     await page.logIn();
 
     const text = await page.getContentsOf('a[href="/auth/logout"]');
