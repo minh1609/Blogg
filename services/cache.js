@@ -4,12 +4,12 @@ const redis = require("redis");
 const util = require("util");
 const keys = require("../config/keys");
 
-const client = redis.createClient(keys.redisUrl);
+const client = redis.createClient(process.env.REDIS_URL || keys.redisUrl);
 client.hget = util.promisify(client.hget); // make function return a promise
 
 //cache(): Querry make use of cahe server
 mongoose.Query.prototype.cache = function(option = {}) {
-    //this reference query
+    //"this" reference query
     this.useCache = true;
 
     this.hashKey = JSON.stringify(option.key || "");
@@ -17,13 +17,14 @@ mongoose.Query.prototype.cache = function(option = {}) {
 };
 //overwrite exec in query
 mongoose.Query.prototype.exec = async function() {
-    //this reference Query
+    //"this" reference Query
 
     if (!this.useCache) {
         return exec.apply(this, arguments);
     }
 
-    //when mongoose need to go to DB to get data, it go to redis first
+    //whenever mongoose need to go to DB to get data, it go to redis first
+
     //get key from querry
     const key = JSON.stringify(
         Object.assign({}, this.getQuery(), {
@@ -48,6 +49,7 @@ mongoose.Query.prototype.exec = async function() {
     }
 
     //if not, go to DB, retrieve data from that, then store data in cache server
+
     //apply: invokes the function and allows  to pass in arguments as an array.
     const result = await exec.apply(this, arguments);
     client.hset(this.hashKey, key, JSON.stringify(result));
