@@ -3,5 +3,4 @@ nohup.out
 .DS_Store
 .vscode
 dev.js
-config
 .env
