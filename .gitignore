@@ -4,3 +4,4 @@ nohup.out
 .vscode
 dev.js
 config
+.env
