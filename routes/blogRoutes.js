@@ -10,14 +10,14 @@ module.exports = app => {
             _id: req.params.id
         });
 
-        res.send(blog);
+        res.status(200).send(blog);
     });
 
     app.get("/api/blogs", requireLogin, async (req, res) => {
         const blogs = await Blog.find({ _user: req.user.id }).cache({
             key: req.user.id
         });
-        res.send(blogs);
+        res.status(200).send(blogs);
     });
     //when ever user create a new post, old cache for this user will be deleted
     app.post("/api/blogs", requireLogin, cleanCache, async (req, res) => {
@@ -36,5 +36,14 @@ module.exports = app => {
         } catch (err) {
             res.send(400, err);
         }
+    });
+
+    app.delete("/api/blogs/:id", requireLogin, (req, res) => {
+        const blog = Blog.findOneAndDelete({
+            _user: req.user.id,
+            _id: req.params.id
+        });
+
+        res.status(200).send(blog);
     });
 };
