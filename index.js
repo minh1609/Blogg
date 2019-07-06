@@ -27,6 +27,7 @@ app.use(passport.session());
 
 require("./routes/authRoutes")(app);
 require("./routes/blogRoutes")(app);
+require("./routes/uploadRoutes")(app);
 
 //PRODUCTION SET UP
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "ci") {
