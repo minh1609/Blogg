@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
+const express = require("express");
 const requireLogin = require("../middlewares/requireLogin");
 const cleanCache = require("../middlewares/cleanCache");
 const Blog = mongoose.model("Blog");
 
-module.exports = app => {
+module.exports = (app = express()) => {
     app.get("/api/blogs/:id", requireLogin, async (req, res) => {
         const blog = await Blog.findOne({
             _user: req.user.id,
@@ -38,12 +39,10 @@ module.exports = app => {
         }
     });
 
-    app.delete("/api/blogs/:id", requireLogin, (req, res) => {
-        const blog = Blog.findOneAndDelete({
-            _user: req.user.id,
-            _id: req.params.id
-        });
+    app.delete("/api/blogs/:id", async (req, res) => {
+        await Blog.findByIdAndDelete(req.params.id);
+        console.log(req.params.id);
 
-        res.status(200).send(blog);
+        res.send({ status: "deleted" });
     });
 };

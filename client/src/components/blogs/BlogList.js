@@ -20,9 +20,9 @@ class BlogList extends Component {
                         </div>
                         <div className="card-action">
                             <Link to={`/blogs/${blog._id}`}>Read</Link>
-                            <button onClick={deleteBlog(blog._id)}>
+                            {/* <button onClick={deleteBlog(blog._id)}>
                                 Delete
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>

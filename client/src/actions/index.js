@@ -42,6 +42,6 @@ export const fetchBlog = id => async dispatch => {
 };
 
 export const deleteBlog = id => async dispatch => {
-    await axios.delete(`/api/blogs/:${id}`);
+    await axios.delete(`/api/blogs/${id}`);
     dispatch({ type: DELETE_BLOG, payload: id });
 };
