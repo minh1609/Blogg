@@ -12,7 +12,7 @@
 
     ![alt text](./cookie.png)
 
--   Whenever user send a request, that cookies always come with the request, help server identifies who make the request
+*   Whenever user send a request, that cookies always come with the request, help server identifies who make the request (or whoever has this pair of cookie in their browser is counted as authenticated user)
 
 ## What is the meaning of a long string inside cookie ?
 
@@ -23,7 +23,7 @@ _(this app using "passport" and "cookie-session" to manage authentication)_
 > express:sess.sig: Mgc2MrAFKnWx5oXz9jUZOFnKkEk
 
 **express:sess**
-Using "safe-buffer" package, we can convert string from base64 to utf8. After conversion, it become something like this
+Using "safe-buffer" package, we can convert this long string from base64 to utf8. After conversion, it become something like this
 
 ```javascript
 passport: {
@@ -35,7 +35,9 @@ passport: {
 ==> express:sess created from user id
 
 **express:sess.sig**
-Using "keygrip" package, value of express:sess, and a key I set for cookie-session, we can create value for express:sess.sig
+(improve security for cookie)
+
+Using "keygrip" package, value of express:sess, and a key I set for cookie-session(key for encrypting cookie), we get the value for express:sess.sig
 
 ```javascript
 const session =
@@ -48,7 +50,7 @@ keygrip.sign("express:sess=" + session);
 
 ## Testing by jess, puppeteer
 
-### Bypass authentication
+### Bypass authentication when testing
 
 #### Easy way
 
@@ -70,7 +72,7 @@ logIn = async page => {
 ```
 
 pros: fast\
-cons: does not work on different database (ci environment use different database)
+cons: does not work on different database (ci environment use different database, diffrent encrytion key)
 
 #### Difficult way
 
@@ -90,3 +92,18 @@ cons: write more code
     -   Enter invalid input to create blog
 -   User not log in
     -   Can not make get, post request to server
+
+## Redis with Mongoose
+
+Simple approach:
+Over write exec( ) function in Query Object, before retrieve data from DataBase, go to Redis server first, see if data needed to retrieve already inside Redis or not
+
+-   If yes, get this data, do not go to MongoDB
+-   If no, go to MongoDB, get data, then save it to Redis
+
+Note:
+
+-   Do not cache all data
+-   Delete cached data if this data has been update
+
+[Code Implementation:](./services/cache)
