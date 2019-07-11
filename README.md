@@ -95,15 +95,12 @@ cons: write more code
 
 ## Redis with Mongoose
 
-Simple approach:
-Over write exec( ) function in Query Object, before retrieve data from DataBase, go to Redis server first, see if data needed to retrieve already inside Redis or not
+Over write exec( ) function in Mongoose Query Object, before retrieve data from DataBase, go to Redis server first, see if data needed already exists inside Redis or not
 
 -   If yes, get this data, do not go to MongoDB
 -   If no, go to MongoDB, get data, then save it to Redis
 
-Note:
+**Note**:
 
 -   Do not cache all data
--   Delete cached data if this data has been update
-
-[Code Implementation:](./services/cache)
+-   Delete cached data if this data has been modified
