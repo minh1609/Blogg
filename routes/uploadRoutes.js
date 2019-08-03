@@ -15,13 +15,12 @@ const s3 = new AWS.S3({
 module.exports = app => {
     app.get("/api/upload/", requireLogin, (req, res) => {
         //generate uniq string
-        const key = `${req.user.id}/${uuid()}.jpeg`;
+        const key = `${req.user.id}/${uuid()}.jpeg`; //key is image name on Amazon S3
         s3.getSignedUrl(
             "putObject",
             {
                 Bucket: "blog-image-nodejs",
                 ContentType: "image/jpeg",
-                //name of file upload
                 Key: key
             },
             (err, url) => {

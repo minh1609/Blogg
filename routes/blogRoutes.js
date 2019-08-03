@@ -39,10 +39,11 @@ module.exports = (app = express()) => {
         }
     });
 
-    app.delete("/api/blogs/:id", async (req, res) => {
+    app.delete("/api/blogs/:id", requireLogin, cleanCache, async (req, res) => {
         await Blog.findByIdAndDelete(req.params.id);
+
         console.log(req.params.id);
 
-        res.send({ status: "deleted" });
+        res.status(200).send({ status: `Post ${req.params.id} is deleted` });
     });
 };

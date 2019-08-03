@@ -19,10 +19,21 @@ class BlogList extends Component {
                             <p>{blog.content}</p>
                         </div>
                         <div className="card-action">
-                            <Link to={`/blogs/${blog._id}`}>Read</Link>
-                            {/* <button onClick={deleteBlog(blog._id)}>
+                            <Link
+                                className="waves-effect waves-light btn"
+                                to={`/blogs/${blog._id}`}
+                                style={{ marginRight: "5px" }}
+                            >
+                                Read
+                            </Link>
+                            <button
+                                class="waves-effect waves-light btn"
+                                onClick={() => {
+                                    this.props.deleteBlog(blog._id);
+                                }}
+                            >
                                 Delete
-                            </button> */}
+                            </button>
                         </div>
                     </div>
                 </div>
