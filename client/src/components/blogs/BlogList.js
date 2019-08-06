@@ -27,7 +27,7 @@ class BlogList extends Component {
                                 Read
                             </Link>
                             <button
-                                class="waves-effect waves-light btn"
+                                className="waves-effect waves-light btn"
                                 onClick={() => {
                                     this.props.deleteBlog(blog._id);
                                 }}

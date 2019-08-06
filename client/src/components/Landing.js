@@ -3,7 +3,7 @@ import React from "react";
 const Icon = props => {
     return (
         <div className="col-sm-6 col-md-3 my-3 " style={{ color: "#1a237e" }}>
-            <i class={props.icon} style={{ fontSize: "80px" }} />
+            <i className={props.icon} style={{ fontSize: "80px" }} />
             <h5>{props.content}</h5>
         </div>
     );

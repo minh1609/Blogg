@@ -41,9 +41,6 @@ module.exports = (app = express()) => {
 
     app.delete("/api/blogs/:id", requireLogin, cleanCache, async (req, res) => {
         await Blog.findByIdAndDelete(req.params.id);
-
-        console.log(req.params.id);
-
         res.status(200).send({ status: `Post ${req.params.id} is deleted` });
     });
 };
