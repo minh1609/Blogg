@@ -27,9 +27,15 @@ mongoose.Query.prototype.exec = async function() {
 
     //get key from querry
     const key = JSON.stringify(
-        Object.assign({}, this.getQuery(), {
-            collections: this.mongooseCollection.name
-        })
+        Object.assign(
+            {},
+            this.getQuery(), //getQuery() return {_id:asdasdsad} {_user:asddweqsd}, in this case, there are 2 query send to database
+            // {_id: ... } : find user has this id
+            //{_user:asddweqsd}: fetch blog post belong to current user
+            {
+                collections: this.mongooseCollection.name // blogs, users
+            }
+        )
     );
 
     //see if we have value for key in redis
@@ -37,10 +43,8 @@ mongoose.Query.prototype.exec = async function() {
     //if we do, return data from redis
     if (cacheValue) {
         const doc = JSON.parse(cacheValue);
-
-        //check if it is array or not
         if (Array.isArray(doc)) {
-            //model(arg) return model object
+            //model(arg) return model model
             //mongoose expect to get a Model object back, not JSON
             return doc.map(d => new this.model(d));
         } else {
