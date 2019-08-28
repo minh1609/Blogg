@@ -2,6 +2,10 @@
 
 #### For future references
 
+## Demonstration
+
+![picture](./blog.gif)
+
 ## Authentication process step by step
 
 -   User clicks "Log in with Google" button
